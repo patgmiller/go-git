@@ -1066,7 +1066,7 @@ func checkFastForwardUpdate(s storer.EncodedObjectStorer, remoteRefs storer.Refe
 		return fmt.Errorf("non-fast-forward update: %s", cmd.Name.String())
 	}
 
-	ff, err := isFastForward(s, cmd.Old, cmd.New)
+	ff, err := IsFastForward(s, cmd.Old, cmd.New)
 	if err != nil {
 		return err
 	}
@@ -1078,7 +1078,7 @@ func checkFastForwardUpdate(s storer.EncodedObjectStorer, remoteRefs storer.Refe
 	return nil
 }
 
-func isFastForward(s storer.EncodedObjectStorer, old, new plumbing.Hash) (bool, error) {
+func IsFastForward(s storer.EncodedObjectStorer, old, new plumbing.Hash) (bool, error) {
 	c, err := object.GetCommit(s, new)
 	if err != nil {
 		return false, err
@@ -1198,10 +1198,10 @@ func (r *Remote) updateLocalReferenceStorage(
 			old, _ := storer.ResolveReference(r.s, localName)
 			new := plumbing.NewHashReference(localName, ref.Hash())
 
-			// If the ref exists locally as a non-tag and force is not
-			// specified, only update if the new ref is an ancestor of the old
-			if old != nil && !old.Name().IsTag() && !force && !spec.IsForceUpdate() {
-				ff, err := isFastForward(r.s, old.Hash(), new.Hash())
+			// If the ref exists locally as a branch and force is not specified,
+			// only update if the new ref is an ancestor of the old
+			if old != nil && old.Name().IsBranch() && !force && !spec.IsForceUpdate() {
+				ff, err := IsFastForward(r.s, old.Hash(), new.Hash())
 				if err != nil {
 					return updated, err
 				}
