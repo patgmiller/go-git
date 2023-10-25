@@ -89,11 +89,80 @@ type CloneOptions struct {
 	Shared bool
 }
 
-// MergeOptions describes how a merge should be erformed
+// MergeMode Except in a fast-forward merge, the branches to be
+// merged must be tied together by a merge commit that has
+// both of them as its parents. Also see "get help merge" TRUE MERGE.
+type MergeMode int8
+
+const (
+	MergeDefault MergeMode = iota
+	// MergeAbort ("git merge --abort") Abort the current conflict
+	// resolution process, and try to reconstruct the pre-merge state.
+
+	// If there were uncommitted worktree changes present when the
+	// merge started, "git merge --abort" will in some cases
+	// be unable to reconstruct these changes. It is therefore
+	// recommended to always commit or stash your changes
+	// before running "git merge".
+	MergeAbort
+	// MergeContinue ("git merge --continue") After a git merge stops
+	// due to conflicts you can resume the merge by running
+	// "git merge --continue".
+	MergeContinue
+)
+
+func (mm MergeMode) String() string {
+	switch mm {
+	case MergeDefault:
+		return "MergeDefault"
+	case MergeAbort:
+		return "MergeAbort"
+	case MergeContinue:
+		return "MergeContinue"
+	}
+	return fmt.Sprintf("Unknown (%d)", mm)
+}
+
+// FastForwardMode
+// Also see "git help merge" FAST-FORWARD MERGE.
+type FastForwardMode int8
+
+const (
+	// FastForward (--ff) When the merge resolves as a fast-forward,
+	// only update the branch pointer, without creating a merge
+	// commit. This is the default behavior.
+	FastForward FastForwardMode = iota
+	// NoFastForward (--no-ff) Create a merge commit even when the
+	// merge resolves as a fast-forward. This is the default behaviour
+	// when merging an annotated (and possibly signed) tag that is
+	// not stored in its natural place in refs/tags/ hierarchy.
+	NoFastForward
+	// FastForwardOnly (--ff-only) Refuse to merge and exit with a
+	// non-zero status unless the current HEAD is already up to date
+	// or the merge can be resolved as a fast-forward.
+	FastForwardOnly
+)
+
+func (ff FastForwardMode) String() string {
+	switch ff {
+	case FastForward:
+		return "FastForward"
+	case NoFastForward:
+		return "NoFastForward"
+	case FastForwardOnly:
+		return "FastForwardOnly"
+	}
+	return fmt.Sprintf("Unknown (%d)", ff)
+}
+
+// MergeOptions controls how a merge should be performed.
 type MergeOptions struct {
-	// Requires a merge to be fast forward only. If this is true, then a merge will
-	// throw an error if ff is not possible.
-	FFOnly bool
+	// Mode controls merge behavior when MERGE_HEAD is present.
+	Mode MergeMode
+	// FastForward determines behavior for how merge updates the
+	// branch pointer. It also controls if a merge commit is
+	// created or not.
+	FastForward FastForwardMode
 }
 
 // Validate validates the fields and sets the default values.

@@ -815,20 +815,20 @@ func (r *Repository) buildTagSignature(tag *object.Tag, signKey *openpgp.Entity)
 // If you want to check to see if the tag is an annotated tag, you can call
 // TagObject on the hash of the reference in ForEach:
 //
-//	ref, err := r.Tag("v0.1.0")
-//	if err != nil {
-//	  // Handle error
-//	}
+//	  ref, err := r.Tag("v0.1.0")
+//	  if err != nil {
+//	    // Handle error
+//	  }
 //
-//	obj, err := r.TagObject(ref.Hash())
-//	switch err {
-//	case nil:
-//	  // Tag object present
-//	case plumbing.ErrObjectNotFound:
-//	  // Not a tag object
-//	default:
-//	  // Some other error
-//	}
+//			obj, err := r.TagObject(ref.Hash())
+//			switch err {
+//			case nil:
+//			  // Tag object present
+//			case plumbing.ErrObjectNotFound:
+//			  // Not a tag object
+//			default:
+//			  // Some other error
+//			}
 func (r *Repository) Tag(name string) (*plumbing.Reference, error) {
 	ref, err := r.Reference(plumbing.ReferenceName(path.Join("refs", "tags", name)), false)
 	if err != nil {
@@ -1760,25 +1760,6 @@ func (r *Repository) RepackObjects(cfg *RepackConfig) (err error) {
 	}
 
 	return nil
-}
-
-// Merge attempts to merge ref onto HEAD. Currently only supports fast-forward merges
-func (r *Repository) Merge(ref plumbing.Reference, opts MergeOptions) error {
-	if !opts.FFOnly {
-		return errors.New("non fast-forward merges are not supported yet")
-	}
-
-	head, err := r.Head()
-	if err != nil {
-		return err
-	}
-
-	ff, err := IsFastForward(r.Storer, head.Hash(), ref.Hash())
-	if !ff {
-		return errors.New("fast forward is not possible")
-	}
-
-	return r.Storer.SetReference(plumbing.NewHashReference(head.Name(), ref.Hash()))
 }
 
 // createNewObjectPack is a helper for RepackObjects taking care

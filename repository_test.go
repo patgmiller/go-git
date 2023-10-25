@@ -431,8 +431,8 @@ func (s *RepositorySuite) TestMergeFF(c *C) {
 
 	commit, err := r.CommitObject(head.Hash())
 	c.Assert(err, IsNil)
-	treeHash := commit.TreeHash
 
+	treeHash := commit.TreeHash
 	hash := commit.Hash
 
 	for i := 0; i < 10; i++ {
@@ -460,9 +460,7 @@ func (s *RepositorySuite) TestMergeFF(c *C) {
 	mergeBranchRef := plumbing.NewHashReference(mergeBranchRefname, hash)
 	c.Assert(r.Storer.SetReference(mergeBranchRef), IsNil)
 
-	err = r.Merge(*mergeBranchRef, MergeOptions{
-		FFOnly: true,
-	})
+	err = r.Merge(*mergeBranchRef, MergeOptions{})
 	c.Assert(err, IsNil)
 
 	head, err = r.Head()
