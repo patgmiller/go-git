@@ -815,20 +815,20 @@ func (r *Repository) buildTagSignature(tag *object.Tag, signKey *openpgp.Entity)
 // If you want to check to see if the tag is an annotated tag, you can call
 // TagObject on the hash of the reference in ForEach:
 //
-//	  ref, err := r.Tag("v0.1.0")
-//	  if err != nil {
-//	    // Handle error
-//	  }
+//	ref, err := r.Tag("v0.1.0")
+//	if err != nil {
+//	  // Handle error
+//	}
 //
-//			obj, err := r.TagObject(ref.Hash())
-//			switch err {
-//			case nil:
-//			  // Tag object present
-//			case plumbing.ErrObjectNotFound:
-//			  // Not a tag object
-//			default:
-//			  // Some other error
-//			}
+//	obj, err := r.TagObject(ref.Hash())
+//	switch err {
+//	case nil:
+//	  // Tag object present
+//	case plumbing.ErrObjectNotFound:
+//	  // Not a tag object
+//	default:
+//	  // Some other error
+//	}
 func (r *Repository) Tag(name string) (*plumbing.Reference, error) {
 	ref, err := r.Reference(plumbing.ReferenceName(path.Join("refs", "tags", name)), false)
 	if err != nil {
